@@ -42,13 +42,17 @@ class BootstrapFormHelper extends FormHelper {
 			}
 		}
 		
-		$_ = $this->_input($name, $options, $hidden);
+		$result = $this->_input($name, $options, $hidden);
 		
-		return $hidden . $this->_clearfix($name, $_, array(
-			'label' => $options['label'],
-			'div' => $options['div'],
-			'type' => isset($options['type']) ? $options['type'] : NULL,
-		));
+		if (@$options['type'] !== 'hidden') {
+			$result = $hidden . $this->_clearfix($name, $result, array(
+				'label' => $options['label'],
+				'div' => $options['div'],
+				'type' => isset($options['type']) ? $options['type'] : NULL,
+			));
+		}
+		
+		return $result;
 	}
 
 	public function inlineInputs($name, $inputs, $options = array()) {
