@@ -1,56 +1,97 @@
 <?php
-App::uses('AppHelper', 'View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('Inflector', 'Utility');
 
-class BootstrapHtmlHelper extends AppHelper {
+class BootstrapHtmlHelper extends HtmlHelper {
 
-	public $helpers = array('Html');
+	const ICON_PREFIX = 'icon-';
 
-	public function css($url = 'bootstrap.min', $rel = null, $options = array()) {
-		$pluginRoot = dirname(dirname(__DIR__));
+	public function __construct(View $View, $settings = array()) {
+		parent::__construct($View, $settings);
+		if (!empty($settings['configFile'])) {
+			$this->loadConfig($settings['configFile']);
+		} else {
+			$this->loadConfig('TwitterBootstrap.html5_tags');
+		}
+	}
+
+	public function icon($class) {
+		$class = explode(' ', $class);
+		foreach ($class as &$_class) {
+			if ($_class) {
+				$_class = self::ICON_PREFIX . $_class;
+			} else {
+				unset($_class);
+			}
+		}
+		return '<i class="' . implode(' ', $class) . '"></i>';
+	}
+
+	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
+		$default = array('icon' => null, 'escape' => true);
+		$options = array_merge($default, (array)$options);
+		if ($options['icon']) {
+			if ($options['escape']) {
+				$title = h($title);
+			}
+			$title = $this->icon($options['icon']) . ' ' . $title;
+			$options['escape'] = false;
+			unset($options['icon']);
+		}
+		return parent::link($title, $url, $options, $confirmMessage);
+	}
+
+	public function css($url = null, $rel = null, $options = array()) {
+		if (empty($url)) {
+			$url = 'bootstrap.min.css';
+			$pluginRoot = dirname(dirname(DIRNAME(__FILE__)));
+			$pluginName = end(explode(DS, $pluginRoot));
+			$url = '/' . Inflector::underscore($pluginName) . '/css/' . $url;
+		}
+		return parent::css($url, $rel, $options);
+	}
+
+	public function bootstrapCss($url = 'bootstrap.min.css', $rel = null, $options = array()) {
+		$pluginRoot = dirname(dirname(DIRNAME(__FILE__)));
 		$pluginName = end(explode(DS, $pluginRoot));
 
 		$url = '/' . Inflector::underscore($pluginName) . '/css/' . $url;
-		return $this->Html->css($url, $rel, $options);
+		return parent::css($url, $rel, $options);
 	}
 
-	public function script($url = 'all', $options = array()) {
-		$pluginRoot = dirname(dirname(__DIR__));
-		$pluginName = end(explode(DS, $pluginRoot));
-		$jsPath = $pluginRoot . DS . 'webroot' . DS . 'js' . DS;
-
-		if ($url === 'all') {
-			$url = array(
-				'bootstrap-twipsy.js',
-				'bootstrap-popover.js',
-			);
-			foreach (glob($jsPath . '*') as $js) {
-				$url[] = basename($js);
-			}
-			$url = array_unique($url);
+	public function script($url = null, $options = array()) {
+		if (empty($url)) {
+			$url = 'bootstrap.min.js';
+			$pluginRoot = dirname(dirname(DIRNAME(__FILE__)));
+			$pluginName = end(explode(DS, $pluginRoot));
+			$url = '/' . Inflector::underscore($pluginName) . '/js/' . $url;
 		}
-		$url = (array) $url;
-		array_walk($url, function(&$value) use ($pluginName) {
-			$value = '/' . Inflector::underscore($pluginName) . '/js/' . $value;
-		});
-		return $this->Html->script($url, $options);
+		return parent::script($url, $options);
+	}
+
+	public function bootstrapScript($url = 'bootstrap.min.js', $options = array()) {
+		$pluginRoot = dirname(dirname(DIRNAME(__FILE__)));
+		$pluginName = end(explode(DS, $pluginRoot));
+
+		$url = '/' . Inflector::underscore($pluginName) . '/js/' . $url;
+		return parent::script($url, $options);
 	}
 
 	public function breadcrumb($items, $options = array()) {
 		$default = array(
 			'class' => 'breadcrumb',
 		);
-		$options += $default;
+		$options = array_merge($default, (array)$options);
 
 		$count = count($items);
 		$li = array();
-		for ($i=0; $i < $count - 1; $i++) {
+		for ($i = 0; $i < $count - 1; $i++) {
 			$text = $items[$i];
 			$text .= '&nbsp;<span class="divider">/</span>';
-			$li[] = $this->Html->tag('li', $text);
+			$li[] = parent::tag('li', $text);
 		}
-		$li[] = $this->Html->tag('li', end($items), array('class' => 'active'));
-		return $this->Html->tag('ul', implode("\n", $li), $options);
+		$li[] = parent::tag('li', end($items), array('class' => 'active'));
+		return parent::tag('ul', implode("\n", $li), $options);
 	}
 
 }
