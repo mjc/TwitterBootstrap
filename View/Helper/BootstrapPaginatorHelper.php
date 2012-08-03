@@ -203,4 +203,56 @@ class BootstrapPaginatorHelper extends PaginatorHelper {
 		);
 	}
 
+	public function sort($key, $title = null, $options = array()) {
+		$options = array_merge(array('url' => array(), 'model' => null), $options);
+		$url = $options['url'];
+		unset($options['url']);
+
+		if (empty($title)) {
+			$title = $key;
+			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
+		}
+		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		unset($options['direction']);
+
+		$icon = '';
+		$sortKey = $this->sortKey($options['model']);
+		$defaultModel = $this->defaultModel();
+		$isSorted = (
+			$sortKey === $key ||
+			$sortKey === $defaultModel . '.' . $key ||
+			$key === $defaultModel . '.' . $sortKey
+		);
+
+		if ($isSorted) {
+			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
+			$class = $dir === 'asc' ? 'desc' : 'asc';
+			if (!empty($options['class'])) {
+				$options['class'] .= ' ' . $class;
+			} else {
+				$options['class'] = $class;
+			}
+
+			if (isset($options['icons'])) {
+			    $icons = $options['icons'];
+			    unset($options['icons']);
+			} else {
+			    $icons = array(
+			        'asc'  => $this->Html->icon('chevron-down'),
+			        'desc' => $this->Html->icon('chevron-up')
+		        );
+			}
+
+			$icon = $icons[$dir];
+		}
+		if (is_array($title) && array_key_exists($dir, $title)) {
+			$title = $title[$dir];
+		}
+
+		$title = h($title) . $icon;
+		$options['escape'] = false;
+
+		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
+		return $this->link($title, $url, $options);
+	}
 }
