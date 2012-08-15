@@ -34,7 +34,7 @@ class BootstrapHtmlHelper extends HtmlHelper {
 			if ($options['escape']) {
 				$title = h($title);
 			}
-			$title = $this->icon($options['icon']) . ' ' . $title;
+			$title = $this->icon($options['icon']) . $title;
 			$options['escape'] = false;
 			unset($options['icon']);
 		}
