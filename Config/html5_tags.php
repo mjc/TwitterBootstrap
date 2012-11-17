@@ -2,6 +2,7 @@
 $config = array('tags' => array(
 	'meta' => '<meta%s>',
 	'metalink' => '<link href="%s"%s>',
+	'input' => '<input name="%s"%s>',
 	'hidden' => '<input type="hidden" name="%s"%s>',
 	'checkbox' => '<input type="checkbox" name="%s"%s>',
 	'checkboxmultiple' => '<input type="checkbox" name="%s[]"%s>',
@@ -11,7 +12,7 @@ $config = array('tags' => array(
 	'file_no_model' => '<input type="file" name="%s"%s>',
 	'submit' => '<input %s>',
 	'submitimage' => '<input type="image" src="%s"%s>',
-	'image' => '<img src="%s"%s>',
+	'image' => '<img src="%s" %s>',
 	'tagselfclosing' => '<%s%s>',
 	'css' => '<link rel="%s" href="%s"%s>',
 	'style' => '<style%s>%s</style>',
