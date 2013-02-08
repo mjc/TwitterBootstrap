@@ -49,7 +49,7 @@ class BootstrapFormHelper extends FormHelper {
 			}
 			return $options;
 		} else {
-			$type = $this->_extractOption('type', $this->_Opts[$fieldName]);
+            $type = $this->_extractOption('type', $this->_Opts[$fieldName]);
 
 			$default = array('wrap' => 'span', 'class' => 'add-on');
 			$divOptions = array();
@@ -57,7 +57,7 @@ class BootstrapFormHelper extends FormHelper {
 				$$addon = null;
 				$option = (array)$this->_extractOption($addon, $options);
 				if ($option) {
-					if (!is_array($option[0])) {
+				    if (!is_array($option[0])) {
 						$option = array($option);
 					}
 					foreach ($option as $_option) {
@@ -117,7 +117,13 @@ class BootstrapFormHelper extends FormHelper {
 		$options['legend'] = false;
 		$options['separator'] = "\n";
 		$out = parent::radio($fieldName, $radioOptions, $options);
-		$out = $this->_restructureLabel($out, array('class' => 'radio'));
+		
+		$labelAttr = array('class' => array('radio'));
+		if (!empty($options['labelClass'])) {
+		    $labelAttr['class'] = am($labelAttr['class'], (array)$options['labelClass']); 
+		}
+		
+		$out = $this->_restructureLabel($out, $labelAttr);
 		return $out;
 	}
 
@@ -188,10 +194,10 @@ class BootstrapFormHelper extends FormHelper {
 			$options
 		);
 		$this->_Opts[$fieldName] = $options;
-
+		
 		$type = $this->_extractOption('type', $options);
 		$options = $this->_getType($fieldName, $options);
-
+		
 		$hidden = null;
 		if ('hidden' === $options['type']) {
 			$options['div'] = false;
