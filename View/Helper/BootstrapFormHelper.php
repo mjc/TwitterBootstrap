@@ -93,8 +93,13 @@ class BootstrapFormHelper extends FormHelper {
 			$label['text'] = $after;
 			$label['class'] = null;
 		}
-
+		
 		$label = $this->addClass($label, 'checkbox');
+		
+		if (isset($options['id'])) {
+		    $label['for'] = $options['id'];
+		}
+		
 		$text = $label['text'];
 		unset($label['text']);
 		$out = parent::checkbox($fieldName, $options) . $text;
