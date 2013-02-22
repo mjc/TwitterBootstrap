@@ -19,6 +19,8 @@ class BootstrapFormHelper extends FormHelper {
 	const CLASS_BUTTON = 'btn';
 
 	const CLASS_ERROR = 'error';
+	
+	const CLASS_REQUIRED = 'required';
 
 	public $helpers = array('Html' => array('className' => 'TwitterBootstrap.BootstrapHtml'));
 
@@ -357,6 +359,13 @@ class BootstrapFormHelper extends FormHelper {
 				$options = $this->addClass($options, self::CLASS_ERROR, 'div');
 			}
 		}
+		
+		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+		    if (false !== $div) {
+		        $options = $this->addClass($options, self::CLASS_REQUIRED, 'div');
+		    }
+		}
+		
 		return $options;
 	}
 
