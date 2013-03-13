@@ -1,4 +1,4 @@
-<?php
+`<?php
 App::uses('FormHelper', 'View/Helper');
 App::uses('Set', 'Utility');
 
@@ -117,6 +117,15 @@ class BootstrapFormHelper extends FormHelper {
 				$options['label'] = false;
 			}
 		}
+ 		$this->setEntity($fieldName);
+
+		if ($this->_introspectModel($this->model(), 'validates', $this->field())) {
+			$options['required'] = 'required';
+		}
+		if (isset($options['required'])) {
+			$options['helpInline'] = '<span class="label label-important">' . __('Required') . '</span>&nbsp;';
+		}
+		
 		return $options;
 	}
 

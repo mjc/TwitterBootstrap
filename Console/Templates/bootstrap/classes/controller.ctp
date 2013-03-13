@@ -39,21 +39,29 @@ if (!is_array($helpers)) {
 	$helpers = array();
 }
 $helpers += array(
-	'TwitterBootstrap.BootstrapHtml',
-	'TwitterBootstrap.BootstrapForm',
-	'TwitterBootstrap.BootstrapPaginator'
+	'Session',
+	'Html' => array('className' => 'TwitterBootstrap.BootstrapHtml'),
+	'Form' => array('className' => 'TwitterBootstrap.BootstrapForm'),
+	'Paginator' => array('className' => 'TwitterBootstrap.BootstrapPaginator')
 );
 if (count($helpers)):
 	echo "/**\n * Helpers\n *\n * @var array\n */\n";
 	echo "\tpublic \$helpers = array(";
-	for ($i = 0, $len = count($helpers); $i < $len; $i++):
-		if ($i != $len - 1):
-			echo "'" . Inflector::camelize($helpers[$i]) . "', ";
-		else:
-			echo "'" . Inflector::camelize($helpers[$i]) . "'";
-		endif;
-	endfor;
-	echo ");\n";
+	$out = '';
+	foreach ($helpers as $helper => $options):
+		// if not integer then associative
+		if (!is_integer($helper)) {
+			$out .= var_export(Inflector::camelize($helper),true);
+			$out .= " => " . var_export($options,true);
+		}
+		else if (is_integer($helper)) {
+			$out .= var_export(Inflector::camelize($options),true);
+		}
+		$out .= ",";
+	endforeach;
+	$out = rtrim($out,',') . ");\n";
+
+	echo $out;
 endif;
 
 if (!is_array($components)) {
@@ -70,11 +78,10 @@ if (count($components)):
 			echo "'" . Inflector::camelize($components[$i]) . "'";
 		endif;
 	endfor;
-	echo ");\n";
+		echo ");\n\n";
 endif;
 
-echo $actions;
+	echo trim($actions) . "\n";
 
 endif; ?>
-
 }
